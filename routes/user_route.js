@@ -10,9 +10,9 @@ userRoutes.get("/user/login", async (req, res) => {
   const email = req.query.email;
   const password = encryptString(req.query.password);
 
-  const matching = await User.find({ email, password });
+  const action = await User.find({ email, password });
 
-  const isAuthenticated = matching && matching.length > 0;
+  const isAuthenticated = action && action.length > 0;
 
   let token = "";
   if (isAuthenticated) {
@@ -26,6 +26,7 @@ userRoutes.get("/user/login", async (req, res) => {
   }
   let responseObj = {
     result: isAuthenticated,
+    user: { id: action[0]._id, name: action[0].name, email: action[0].email },
     token: token,
   };
 
@@ -34,23 +35,33 @@ userRoutes.get("/user/login", async (req, res) => {
 
 //creating new User
 userRoutes.post("/user/signup", async (req, res) => {
-  const email = req.body.email;
-  const matching = await User.findOne({ email });
-
-  const isPresent = matching && matching.length > 0;
-  if (isPresent == true) {
-    return res.json({
-      result: false,
-    });
-  } else {
+  try {
     let obj = req.body;
     obj.password = encryptString(obj.password);
+    let action = await User.create(obj);
+    let token = "";
+    if (action) {
+      token = jwt.sign(
+        {
+          data: req.query.email,
+        },
+        process.env.SECRET_KEY,
+        { expiresIn: "1h" }
+      );
+    }
 
-    await User.create(obj);
-
-    return res.json({
+    let responseObj = {
       result: true,
-    });
+      user: { id: action._id, name: action.name, email: action.email },
+      token: token,
+    };
+
+    return res.json(responseObj);
+  } catch (error) {
+    console.log(error);
+    let obj = error.keyPattern;
+    let err = Object.keys(obj)[0];
+    return res.json({ message: `This ${err} already prasent` });
   }
 });
 

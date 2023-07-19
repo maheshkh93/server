@@ -2,30 +2,31 @@ import { Router } from "express";
 import Post from "../models/post_schema.js";
 import Like from "../models/like_schema.js";
 import Comment from "../models/comment_schema.js";
+import protectApi from "../utils/protection.js";
 
 const postRoutes = Router();
 
 //Create a post
-postRoutes.post("/posts/create", async (req, res) => {
+postRoutes.post("/posts/create", protectApi, async (req, res) => {
   const action = await Post.create(req.body);
   return res.json(action ? { result: true } : { result: false });
 });
 
 //Read all post
-postRoutes.get("/posts/get-posts", async (req, res) => {
+postRoutes.get("/posts/get-posts", protectApi, async (req, res) => {
   const posts = await Post.find();
   return res.json({ posts });
 });
 
 //delete a post
-postRoutes.delete("/posts/delete/:id", async (req, res) => {
+postRoutes.delete("/posts/delete/:id", protectApi, async (req, res) => {
   let id = req.params.id;
   const action = await Post.findByIdAndDelete(id);
   return res.json(action ? { result: true } : { result: false });
 });
 
 //update a post
-postRoutes.patch("/posts/update", async (req, res) => {
+postRoutes.patch("/posts/update", protectApi, async (req, res) => {
   let id = req.query.id;
   let update = req.body;
   const action = await Post.findByIdAndUpdate(id, update);
@@ -33,7 +34,7 @@ postRoutes.patch("/posts/update", async (req, res) => {
 });
 
 //Like a post
-postRoutes.post("/posts/like", async (req, res) => {
+postRoutes.post("/posts/like", protectApi, async (req, res) => {
   let email = req.body.email;
   let postId = req.body.postId;
 
@@ -54,7 +55,7 @@ postRoutes.post("/posts/like", async (req, res) => {
 });
 
 //Comment a post
-postRoutes.post("/posts/comment", async (req, res) => {
+postRoutes.post("/posts/comment", protectApi, async (req, res) => {
   let postId = req.body.postId;
 
   await Comment.create(req.body);
