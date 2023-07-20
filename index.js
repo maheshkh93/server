@@ -2,8 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
-import userRoutes from "./routes/user_route.js";
-import postRoutes from "./routes/post_route.js";
+import userRoutes from "./api/user_route.js";
+import postRoutes from "./api/post_route.js";
 import connectToDb from "./db/index.js";
 
 dotenv.config(".env");
