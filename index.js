@@ -18,6 +18,11 @@ app.use(morgan(":method - :url - :date - :response-time ms"));
 //Routes
 app.use("/", userRoutes);
 app.use("/", postRoutes);
+app.use("/", (req, res) => {
+  res.json({
+    message: "Welcome to server",
+  });
+});
 
 //connection to database and then running the server
 Promise.all([connectToDb()])
