@@ -7,8 +7,8 @@ const userRoutes = Router();
 
 //loging in User
 userRoutes.get("/user/login", async (req, res) => {
-  const email = req.query.email;
-  const password = encryptString(req.query.password);
+  const email = req.body.email;
+  const password = encryptString(req.body.password);
 
   const action = await User.find({ email, password });
 
@@ -18,7 +18,7 @@ userRoutes.get("/user/login", async (req, res) => {
   if (isAuthenticated) {
     token = jwt.sign(
       {
-        data: req.query.email,
+        data: req.body.email,
       },
       process.env.SECRET_KEY,
       { expiresIn: "1h" }
@@ -43,7 +43,7 @@ userRoutes.post("/user/signup", async (req, res) => {
     if (action) {
       token = jwt.sign(
         {
-          data: req.query.email,
+          data: req.body.email,
         },
         process.env.SECRET_KEY,
         { expiresIn: "1h" }
