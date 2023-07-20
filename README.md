@@ -5,4 +5,4 @@ atlasUser =
 atlasPassword =
 SECRET_KEY =
 
-// Use desigred Values to use the Application
+// Use desired Values to use the Application
